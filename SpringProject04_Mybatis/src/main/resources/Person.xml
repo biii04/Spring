@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.myspring.Person">
+ 
+<!--  <sql id = "search">
+ select * from person 
+ <where> 
+ <if test="word!=null and field=='name'">
+ name like CONCAT('%',#{word},'%')
+ </if>
+ <if test="word!=null and field=='job'">
+ job like CONCAT('%',#{word},'%')
+ </if>
+ </where>
+ </sql> -->
+
+ <!-- person에서 personvo를 부르고 personvo에서 저 id, name 등등의 값을 받아옴 -->
+
+ <!-- 추가 -->
+ <insert id="insertPerson" parameterType="com.myspring.vo.PersonVO">
+ insert into person values(#{id}, #{name}, #{password}, #{gender}, #{job})
+ </insert>
+ 
+ <!-- 전체보기 -->
+ <select id="listPerson" resultType="com.myspring.vo.PersonVO">
+ select * from person
+ </select>
+  
+ <!-- 검색전체보기 -->
+ <select id = "searchPerson" resultType = "com.myspring.vo.PersonVO" parameterType="java.util.Map">
+ 
+ select * from person 
+ <where> 
+ <if test="word!=null and field=='name'">
+ name like '%${word}%'
+ </if>
+ <if test="word!=null and field=='job'">
+ job like CONCAT('%',#{word},'%')
+ </if>
+ </where>
+ <!-- field like '%word%' / %는 statement로 생각하기 물론 지금은 이렇게 안쓰고 if문 사용함-->
+ </select>
+ 
+ <!-- 상세보기 -->
+ <select id="viewPerson" parameterType="String" resultType="com.myspring.vo.PersonVO">
+ select * from person where id=#{id}
+ </select>
+ 
+ <!-- 수정 -->
+ <update id = "updatePerson" parameterType="com.myspring.vo.PersonVO">
+ update person set name=#{name}, password=#{password}, gender=#{gender}, job=#{job} where id=#{id}
+ </update>
+ 
+ <!-- 삭제 -->
+ <delete id = "deletePerson" parameterType="com.myspring.vo.PersonVO">
+ delete from person where id = #{id}  -->#은 preparedStatement처럼 생각하기 (내부적으로 큰따옴표 존재함)
+ </delete>
+ 
+ <!-- 개수 -->
+ <select id = "countPerson" resultType="int">
+ select count(*) from person
+ </select>
+ 
+ <!-- 검색개수 -->
+<select id = "searchCount" resultType="int" parameterType="com.myspring.vo.PersonVO">
+ select count(*) from person 
+ <where> 
+ <if test="word!=null and field=='name'">
+ name like CONCAT('%',#{word},'%')
+ </if>
+ <if test="word!=null and field=='job'">
+ job like CONCAT('%',#{word},'%')
+ </if>
+ </where>
+<!-- <include refid="search"/> -->  <!-- 젤 위에 따로 적어놓고 이렇게 생략가능 -->
+</select>
+ </mapper>
+ 
+<!--  serviecImpl->PersonImpl->id받은걸 Person.xmp에 넣기 -->
